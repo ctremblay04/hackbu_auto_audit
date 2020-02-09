@@ -1,5 +1,3 @@
-
-
 class Quarter(object):
     def __init__(self, p, d):
         self.purchaces = p
