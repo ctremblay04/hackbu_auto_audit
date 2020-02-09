@@ -2,66 +2,40 @@ import PyPDF2
 import re
 #from pdf_annotate import PdfAnnotator, Appearance, Location
 
-def validate_format(pdf_info):
-    if not pdf_info[2]:
-        print("missing company name")
-    if not pdf_info[pdf_info.index('Date of Order: ') + 1]:
-        print("missing Date of Order")
-    if not pdf_info[pdf_info.index('Custodian: ') + 1]:
-        print("missing custodian")
-    if not pdf_info[pdf_info.index('Trans.Type') + 2]:
-        print("missing transaction type")
-    if not pdf_info[pdf_info.index('Quantity') + 2]:
-        print("missing Quantity")
-    if not pdf_info[pdf_info.index('PPS') + 2]:
-        print("missing PPS")
-    if not pdf_info[pdf_info.index('Security') + 2]:
-        print("missing security")
-    if not pdf_info[pdf_info.index('Type of ') + 2]:
-        print("missing type of field")
-    if not pdf_info[pdf_info.index('Broker/Dealer') + 2]:
-        print("missing Broker/Dealer")
-    if not pdf_info[pdf_info.index('Phone:') + 2]:
-        print("missing Phone")
+class Scraped_PDF(object):
+    def __init__(self, path):
+        self.path = path
+        self.scrape_pdf()
 
-
-    # annotator = PdfAnnotator('trade1.pdf')
-    # annotator.add_annotation(
-    #     'square',
-    #     Location(x1=200, y1=600, x2=350, y2=550, page=0),
-    #     Appearance(stroke_color=(1, 0, 0), stroke_width=3),
-    # )
-    # annotator.write('annotated.pdf')
-
-
-
-def scrape_pdf(path):
-    pdfFileObject = open(path, 'rb')
-    pdf_info = PyPDF2.PdfFileReader(pdfFileObject).getPage(0).extractText().split('\n')
-    print(pdf_info)
-    validate_format(pdf_info)
-
-
-    company_name = pdf_info[2]
-    transaction_type = pdf_info[pdf_info.index('Trans.Type') + 2]
-    quantity = int(pdf_info[pdf_info.index('Quantity') + 2])
-    price_per_share = int(pdf_info[pdf_info.index('PPS') + 2])
-
-    #error handling
-
-    total_amt = quantity * price_per_share
-
-    print('company_name: ' + company_name)
-    print('transaction_type: ' + transaction_type)
-    print('total_amt: ' + str(total_amt))
-    pdfFileObject.close()
-    return (company_name, transaction_type, total_amt)
+    def scrape_pdf(self, path):
+        pdfFileObject = open(path, 'rb')
+        pdf_info = PyPDF2.PdfFileReader(pdfFileObject).getPage(0).extractText().split('\n')
+        self.company_name = pdf_info[2]
+        self.transaction_type = pdf_info[pdf_info.index('Trans.Type') + 2]
+        q = pdf_info[pdf_info.index('Quantity') + 2].replace(',', '')
+        pps = pdf_info[pdf_info.index('PPS') + 2]
+        self.quantity = int(q) if q else None
+        self.price_per_share = int(pps[1:]) if pps else None
+        self.date_of_order = pdf_info[pdf_info.index('Date of Order: ') + 1]
+        self.custodian = pdf_info[pdf_info.index('Custodian: ') + 1]
+        self.security = pdf_info[pdf_info.index('Security') + 2]:
+        self.type = pdf_info[pdf_info.index('Type of ') + 2]:
+        self.broker_dealer = pdf_info[pdf_info.index('Broker/Dealer') + 2]:
+        self.phone = pdf_info[pdf_info.index('Phone:') + 2]:
+        self.ammount = quantity * price_per_share
+        pdfFileObject.close()
 
 
 
 class trade_ticket(object):
-    def __init__(self, path):
-        self.company_name, self.transaction_type, self.total_amt = scrape_pdf(path)
+    def __init__(self, obj):
+        self.company_name = obj.company_name
+        self.transaction_type = obj.transaction_type
+        self.ammount = self.ammount
+
+    
+    def __str__(self):
+        return f"Company name: {self.company_name}\nTransaction Type: {self.transaction_type}\nAmmount: {self.ammount}\n"
 
 
 if __name__ == "__main__":
