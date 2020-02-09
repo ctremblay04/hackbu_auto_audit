@@ -9,7 +9,10 @@ class Company(object):
         self.quarters = quarters
 
     def validate(self):
-        pass
+        ret = CompanyReport(self)
+        for q in quarters:
+            ret.quarter_reports.append(q.validate)
+        return ret
 
     def __str__(self):
         ret = f"Company Name: {self.name}\nCompany Ticker: {self.ticker}\nQuarters:\n"
@@ -38,10 +41,11 @@ class Company(object):
 
             
 
-class CompanyError():
+class Company_Report():
     def __init__(self, c):
         self.company = c
-        self.errors = []
+        self.quarter_reports = []
     
     def __str__(self):
+        #TODO
         return ''
