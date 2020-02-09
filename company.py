@@ -9,15 +9,15 @@ class Company(object):
         self.quarters = quarters
 
     def validate(self):
-        ret = CompanyReport(self)
-        for q in quarters:
-            ret.quarter_reports.append(q.validate)
+        ret = Company_Report(self)
+        for q in self.quarters:
+            ret.quarter_reports.append(q.validate())
         return ret
 
     def __str__(self):
         ret = f"Company Name: {self.name}\nCompany Ticker: {self.ticker}\nQuarters:\n"
         for i in range(4):
-            ret += f"\tQuarter {i}:\n"
+            ret += f"\tQuarter {i+1}:\n"
             for l in str(self.quarters[i]).split('\n'):
                 ret += f'\t\t{l}\n'
         return ret
@@ -37,15 +37,17 @@ class Company(object):
             c = Company(fields[0], fields[1], quarters)
             company_list[c.name] = c
         return company_list
-    
 
-            
 
 class Company_Report():
     def __init__(self, c):
         self.company = c
         self.quarter_reports = []
-    
+
     def __str__(self):
-        #TODO
-        return ''
+        ret = f"Company: {self.company.name} Quarter Reports:\n"
+        for i in range(4):
+            ret += f"\tQuarter {i+1} Report:\n"
+            for l in str(self.quarter_reports[i]).split('\n'):
+                ret += f'\t\t{l}\n'
+        return ret
