@@ -1,7 +1,6 @@
 import PyPDF2
 import re
 import os
-#from pdf_annotate import PdfAnnotator, Appearance, Location
 
 class Scraped_PDF(object):
     def __init__(self, path):
@@ -10,8 +9,7 @@ class Scraped_PDF(object):
 
     def scrape_pdf(self):
         pdfFileObject = open(os.getcwd()+self.path, 'rb')
-        print(PyPDF2.PdfFileReader(pdfFileObject).getPage(0).extractText())
-        pdf_info = PyPDF2.PdfFileReader(pdfFileObject).getPage(0).extractText().split('\n')
+        pdf_info = list(filter(lambda x : any(c.isalnum() for c in x), PyPDF2.PdfFileReader(pdfFileObject).getPage(0).extractText().split('\n')))
         print(pdf_info)
         try:
             self.company_name = pdf_info[2]
@@ -71,9 +69,12 @@ class Scraped_PDF(object):
         self.valid_pdf = self.amount != None and self.transaction_type != None and self.quantity != None
         pdfFileObject.close()
 
+    def __str__(self):
+        return ''
 
 
 class trade_ticket(object):
+    
     def __init__(self, obj):
         self.company_name = obj.company_name
         self.transaction_type = obj.transaction_type
@@ -84,7 +85,7 @@ class trade_ticket(object):
 
 
 if __name__ == "__main__":
-    spdf = Scraped_PDF('/trade_tickets/CompanyA_Q2_p3.pdf')
+    spdf = Scraped_PDF('/trade_tickets/CompanyA_Q2_p1.pdf')
     alex = trade_ticket(spdf)
     print(alex)
 
